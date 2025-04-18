@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import SpaceShooterGame from './SpaceShooterGame'; // 새로운 게임 컴포넌트 임포트
   
 // 메인 포트폴리오 컴포넌트
 const GamePortfolio = () => {
@@ -112,7 +113,7 @@ const GamePortfolio = () => {
                   게임 건너뛰기
                 </button>
               </div>
-              <ClickGame onGameComplete={() => setShowGame(false)} />
+              <SpaceShooterGame onGameComplete={() => setShowGame(false)} />
             </div>
           ) : (
             <div className="flex justify-center space-x-4 mb-10">
