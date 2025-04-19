@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import SpaceShooterGame from './SpaceShooterGame'; // 새로운 게임 컴포넌트 임포트
   
 // 메인 포트폴리오 컴포넌트
 const GamePortfolio = () => {
   const [activeSection, setActiveSection] = useState('home');
   const [menuOpen, setMenuOpen] = useState(false);
-  const [showGame, setShowGame] = useState(true);
 
   // 스크롤 위치에 따라 활성 섹션 업데이트
   useEffect(() => {
@@ -96,41 +94,26 @@ const GamePortfolio = () => {
         )}
       </nav>
 
-      {/* 홈 섹션 (게임 포함) */}
+      {/* 홈 섹션 */}
       <section id="home" className="min-h-screen pt-20 flex flex-col items-center justify-center">
         <div className="max-w-4xl mx-auto px-4 py-8 text-center">
           <h1 className="text-5xl md:text-7xl font-bold mb-6">안녕하세요, <br className="md:hidden" />개발자입니다</h1>
           <p className="text-xl text-gray-400 mb-8">프론트엔드 개발자 & UI/UX 디자이너</p>
           
-          {/* 게임 컴포넌트 */}
-          {showGame ? (
-            <div className="mb-10">
-              <div className="mb-4 flex justify-center">
-                <button
-                  onClick={() => setShowGame(false)}
-                  className="text-sm text-gray-400 hover:text-white px-3 py-1 border border-gray-700 rounded"
-                >
-                  게임 건너뛰기
-                </button>
-              </div>
-              <SpaceShooterGame onGameComplete={() => setShowGame(false)} />
-            </div>
-          ) : (
-            <div className="flex justify-center space-x-4 mb-10">
-              <button 
-                onClick={() => scrollToSection('projects')}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md transition-colors"
-              >
-                프로젝트 보기
-              </button>
-              <button 
-                onClick={() => scrollToSection('contact')}
-                className="border border-gray-600 hover:border-gray-400 text-gray-300 hover:text-white px-6 py-3 rounded-md transition-colors"
-              >
-                연락하기
-              </button>
-            </div>
-          )}
+          <div className="flex justify-center space-x-4 mb-10">
+            <button 
+              onClick={() => scrollToSection('projects')}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md transition-colors"
+            >
+              프로젝트 보기
+            </button>
+            <button 
+              onClick={() => scrollToSection('contact')}
+              className="border border-gray-600 hover:border-gray-400 text-gray-300 hover:text-white px-6 py-3 rounded-md transition-colors"
+            >
+              연락하기
+            </button>
+          </div>
         </div>
       </section>
 
@@ -336,144 +319,6 @@ const GamePortfolio = () => {
           <p className="text-gray-400">&copy; {new Date().getFullYear()} Your Name. All rights reserved.</p>
         </div>
       </footer>
-    </div>
-  );
-};
-
-// 간단한 클릭 게임 컴포넌트
-const ClickGame = ({ onGameComplete }) => {
-  const [circles, setCircles] = useState([]);
-  const [score, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(30);
-  const [gameStatus, setGameStatus] = useState('ready'); // 'ready', 'playing', 'complete'
-  const gameAreaRef = useRef(null);
-  
-  // 게임 시작
-  const startGame = () => {
-    setGameStatus('playing');
-    setScore(0);
-    setTimeLeft(30);
-    setCircles([createNewCircle()]);
-  };
-  
-  // 타이머 설정
-  useEffect(() => {
-    let interval;
-    if (gameStatus === 'playing') {
-      interval = setInterval(() => {
-        setTimeLeft((prevTime) => {
-          if (prevTime <= 1) {
-            clearInterval(interval);
-            setGameStatus('complete');
-            return 0;
-          }
-          return prevTime - 1;
-        });
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [gameStatus]);
-  
-  // 게임 플레이 중에 원 추가
-  useEffect(() => {
-    let spawnInterval;
-    if (gameStatus === 'playing') {
-      spawnInterval = setInterval(() => {
-        if (circles.length < 5) {
-          setCircles(prevCircles => [...prevCircles, createNewCircle()]);
-        }
-      }, 2000);
-    }
-    return () => clearInterval(spawnInterval);
-  }, [gameStatus, circles]);
-  
-  // 새로운 원 생성
-  const createNewCircle = () => {
-    const colors = ['bg-red-500', 'bg-blue-500', 'bg-green-500', 'bg-yellow-500', 'bg-purple-500'];
-    return {
-      id: Date.now(),
-      x: Math.random() * 80 + 10, // 10% ~ 90% of the container width
-      y: Math.random() * 80 + 10, // 10% ~ 90% of the container height
-      size: Math.floor(Math.random() * 20) + 20, // 20px ~ 40px
-      color: colors[Math.floor(Math.random() * colors.length)],
-    };
-  };
-  
-  // 원 클릭 처리
-  const handleCircleClick = (id) => {
-    setScore(prevScore => prevScore + 1);
-    setCircles(prevCircles => prevCircles.filter(circle => circle.id !== id));
-  };
-  
-  return (
-    <div className="max-w-lg mx-auto">
-      <div className="mb-4 text-center">
-        <h2 className="text-2xl font-bold mb-2">원 클릭 게임</h2>
-        <p className="text-gray-400 mb-2">30초 동안 나타나는 원을 최대한 많이 클릭하세요!</p>
-      </div>
-      
-      <div className="flex justify-between items-center mb-4">
-        <div className="text-lg">
-          <span className="font-medium">점수:</span> {score}
-        </div>
-        <div className="text-lg">
-          <span className="font-medium">남은 시간:</span> {timeLeft}초
-        </div>
-      </div>
-      
-      {gameStatus === 'ready' && (
-        <div className="text-center">
-          <button
-            onClick={startGame}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md transition-colors"
-          >
-            게임 시작하기
-          </button>
-        </div>
-      )}
-      
-      {gameStatus === 'playing' && (
-        <div
-          ref={gameAreaRef}
-          className="bg-gray-800 w-full h-64 relative rounded-lg overflow-hidden"
-        >
-          {circles.map(circle => (
-            <button
-              key={circle.id}
-              onClick={() => handleCircleClick(circle.id)}
-              className={`absolute rounded-full ${circle.color} cursor-pointer`}
-              style={{
-                left: `${circle.x}%`,
-                top: `${circle.y}%`,
-                width: `${circle.size}px`,
-                height: `${circle.size}px`,
-                transform: 'translate(-50%, -50%)'
-              }}
-            />
-          ))}
-        </div>
-      )}
-      
-      {gameStatus === 'complete' && (
-        <div className="text-center">
-          <h3 className="text-xl font-semibold mb-2">게임 종료!</h3>
-          <p className="text-lg mb-4">당신의 최종 점수: <span className="font-bold text-blue-400">{score}</span></p>
-          <div className="flex justify-center space-x-3">
-            <button
-              onClick={startGame}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors"
-            >
-              다시 하기
-            </button>
-            <button
-              onClick={onGameComplete}
-              className="border border-gray-600 hover:border-gray-400 text-gray-300 hover:text-white px-4 py-2 rounded-md transition-colors"
-            >
-              계속하기
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
